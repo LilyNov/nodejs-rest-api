@@ -1,57 +1,35 @@
-const db = require('./db')
-const { ObjectID } = require('mongodb')
-
-const getCollection = async (db, name) => {
-  const client = await db
-  const collection = await client.db().collection(name)
-  return collection
-}
+const Contact = require("./shemas/contact");
 
 const listContacts = async () => {
-  const collection = await getCollection(db, 'contacts')
-  const results = await collection.find({}).toArray()
-  return results
-}
+  const result = await Contact.find({});
+  return result;
+};
 
-const getContactById = async (contactId) => {
-  const collection = await getCollection(db, 'contacts')
-  const ObjectId = new ObjectID(contactId)
-  console.log(ObjectId.getTimestamp())
-
-  const [result] = await collection.find({ _id: ObjectId }).toArray()
-  return result
-}
+const getContactById = async (id) => {
+  const result = await Contact.find({ _id: id });
+  return result;
+};
 
 const addContact = async (body) => {
-  const record = {
-    ...body,
-  }
-  const collection = await getCollection(db, 'contacts')
-  const {
-    ops: [result],
-  } = await collection.insertOne(record)
-  return result
-}
+  const result = await Contact.create(body);
+  return result;
+};
 
-const updateContact = async (contactId, body) => {
-  const collection = await getCollection(db, 'contacts')
-  const ObjectId = new ObjectID(contactId)
-  const { value: result } = await collection.findOneAndUpdate(
-    { _id: ObjectId },
-    { $set: body },
-    { returnOriginal: false }
-  )
-  return result
-}
+const updateContact = async (id, body) => {
+  const result = await Contact.findByIdAndUpdate(
+    { _id: id },
+    { ...body },
+    { new: true }
+  );
+  return result;
+};
 
-const removeContact = async (contactId) => {
-  const collection = await getCollection(db, 'contacts')
-  const ObjectId = new ObjectID(contactId)
-  const { value: result } = await collection.findOneAndDelete({
-    _id: ObjectId,
-  })
-  return result
-}
+const removeContact = async (id) => {
+  const result = await Contact.findByIdAndRemove({
+    _id: id,
+  });
+  return result;
+};
 
 module.exports = {
   listContacts,
@@ -59,4 +37,4 @@ module.exports = {
   removeContact,
   addContact,
   updateContact,
-}
+};

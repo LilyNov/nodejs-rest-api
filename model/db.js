@@ -13,11 +13,11 @@ mongoose.connection.on("connected", () => {
   console.log("Database connection successful");
 });
 
-mongoose.connection.on("connected", (err) => {
-  console.log(`Database connection successful error ${err.message}`);
+mongoose.connection.on("error", (err) => {
+  console.log(`Database connection successful error: ${err.message}`);
 });
 
-mongoose.connection.on("connected", () => {
+mongoose.connection.on("disconnected", () => {
   console.log("Database disconnected");
 });
 

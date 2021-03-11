@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
 const contactSchema = new Schema({
@@ -15,6 +15,10 @@ const contactSchema = new Schema({
     type: Number,
     required: [true, "Set name for a contact"],
   },
+});
+
+contactSchema.virtual("id").get(function () {
+  return this._id;
 });
 
 const Contact = model("contact", contactSchema);
