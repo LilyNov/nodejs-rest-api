@@ -1,35 +1,56 @@
 const db = require('./db')
-const { v4: uuid } = require('uuid')
-// const fs = require("fs/promises");
-// const contacts = require("./contacts.json");
+const { ObjectID } = require('mongodb')
+
+const getCollection = async (db, name) => {
+  const client = await db
+  const collection = await client.db().collection(name)
+  return collection
+}
 
 const listContacts = async () => {
-  return db.get('contacts').value()
+  const collection = await getCollection(db, 'contacts')
+  const results = await collection.find({}).toArray()
+  return results
 }
 
 const getContactById = async (contactId) => {
-  return db.get('contacts').find({ contactId }).value()
-}
+  const collection = await getCollection(db, 'contacts')
+  const ObjectId = new ObjectID(contactId)
+  console.log(ObjectId.getTimestamp())
 
-const removeContact = async (contactId) => {
-  const [record] = db.get('contacts').remove({ contactId }).write()
-  return record
+  const [result] = await collection.find({ _id: ObjectId }).toArray()
+  return result
 }
 
 const addContact = async (body) => {
-  const contactId = uuid()
   const record = {
-    contactId,
     ...body,
   }
-  db.get('contacts').push(record).write()
-  return record
+  const collection = await getCollection(db, 'contacts')
+  const {
+    ops: [result],
+  } = await collection.insertOne(record)
+  return result
 }
 
 const updateContact = async (contactId, body) => {
-  const record = db.get('contacts').find({ contactId }).assign(body).value()
-  db.write()
-  return record.contactId ? record : null
+  const collection = await getCollection(db, 'contacts')
+  const ObjectId = new ObjectID(contactId)
+  const { value: result } = await collection.findOneAndUpdate(
+    { _id: ObjectId },
+    { $set: body },
+    { returnOriginal: false }
+  )
+  return result
+}
+
+const removeContact = async (contactId) => {
+  const collection = await getCollection(db, 'contacts')
+  const ObjectId = new ObjectID(contactId)
+  const { value: result } = await collection.findOneAndDelete({
+    _id: ObjectId,
+  })
+  return result
 }
 
 module.exports = {

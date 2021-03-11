@@ -1,10 +1,11 @@
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync')
+require("dotenv").config();
+const uriDb = process.env.URI_DB;
 
-const adapter = new FileSync('./model/contacts.json')
-const db = low(adapter)
+process.on("SIGINT", async () => {
+  const client = await db;
+  client.close();
+  console.log("Connection for db closed and app termination");
+  process.exit(1);
+});
 
-// Set some defaults
-db.defaults({ contacts: [] }).write()
-
-module.exports = db
+module.exports = db;

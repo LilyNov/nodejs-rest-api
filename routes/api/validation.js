@@ -1,21 +1,21 @@
 const Joi = require('joi')
 
 const schemaAddContact = Joi.object({
-  contactname: Joi.string().alphanum().min(3).max(30).required(),
+  name: Joi.string().alphanum().min(3).max(30).required(),
   email: Joi.string().email({
     minDomainSegments: 2,
     tlds: { allow: ['com', 'net'] },
   }),
-  phone: Joi.number().min(5).max(12).required(),
+  phone: Joi.number().min(5).required(),
 })
 
 const schemaUpdateContact = Joi.object({
-  contactname: Joi.string().alphanum().min(3).max(30).optional(),
+  name: Joi.string().alphanum().min(3).max(30).optional(),
   email: Joi.string().email({
     minDomainSegments: 2,
     tlds: { allow: ['com', 'net'] },
   }),
-  phone: Joi.number().min(5).max(12).optional(),
+  phone: Joi.number().min(5).optional(),
 })
 
 const validate = (schema, obj, next) => {
