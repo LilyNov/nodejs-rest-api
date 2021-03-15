@@ -29,10 +29,7 @@ email: {
         type: String,
         default: null
     }
-  owner: {
-      type: SchemaTypes.ObjectId,
-      ref: 'user',
-    }
+
 }
     { versionKey: false, timestamps: true }
 );
@@ -52,4 +49,4 @@ userSchema.methods.validPassword = async function (password) {
 
 const User = model("user, userSchema);
 
-module.exports = User
+module.exports = User;
