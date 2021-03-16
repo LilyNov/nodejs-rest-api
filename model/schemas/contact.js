@@ -1,34 +1,32 @@
-const mongoose = require('mongoose')
-const { Schema, model, SchemaTypes } = mongoose
+const mongoose = require("mongoose");
+const { Schema, model, SchemaTypes } = mongoose;
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 const contactSchema = new Schema(
   {
     name: {
       type: String,
-      required: [true, 'Set name for a contact'],
+      required: [true, "Set name for a contact"],
     },
     email: {
       type: String,
-      required: [true, 'Set email for a contact'],
+      required: [true, "Set email for a contact"],
       unique: true,
     },
     phone: {
       type: Number,
-      required: [true, 'Set name for a contact'],
+      required: [true, "Set name for a contact"],
     },
 
     owner: {
       type: SchemaTypes.ObjectId,
-      ref: 'user',
+      ref: "user",
     },
   },
   { versionKey: false, timestamps: true }
-)
+);
 
-contactSchema.virtual('id').get(function () {
-  return this._id
-})
+contactSchema.plugin(mongoosePaginate);
+const Contact = model("contact", contactSchema);
 
-const Contact = model('contact', contactSchema)
-
-module.exports = Contact
+module.exports = Contact;
