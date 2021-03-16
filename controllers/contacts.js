@@ -1,12 +1,13 @@
 const Contacts = require("../model/contacts");
+const { HttpCode, Status } = require("../helpers/constants");
 
 const getContacts = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const contacts = await Contacts.listContacts(userId);
-    return res.json({
+    return res.status(HttpCode.OK).json({
       status: "success",
-      code: 200,
+      code: HttpCode.OK,
       data: {
         contacts,
       },
@@ -21,17 +22,17 @@ const getById = async (req, res, next) => {
     const userId = req.user.id;
     const contact = await Contacts.getContactById(req.params.contactId, userId);
     if (contact) {
-      return res.json({
+      return res.status(HttpCode.OK).json({
         status: "success",
-        code: 200,
+        code: HttpCode.OK,
         data: {
           contact,
         },
       });
     } else {
-      return res.status(404).json({
+      return res.status(HttpCode.NOT_FOUND).json({
         status: "error",
-        code: 404,
+        code: HttpCode.NOT_FOUND,
         data: "Not Found",
       });
     }
@@ -44,9 +45,9 @@ const create = async (req, res, next) => {
   try {
     const userId = req.user.id;
     const contact = await Contacts.addContact({ ...req.body, owner: userId });
-    return res.status(201).json({
+    return res.status(HttpCode.CREATED).json({
       status: "success",
-      code: 201,
+      code: HttpCode.CREATED,
       data: {
         contact,
       },
@@ -61,9 +62,9 @@ const remove = async (req, res, next) => {
     const userId = req.user.id;
     const contact = await Contacts.removeContact(req.params.contactId, userId);
     if (contact) {
-      return res.json({
+      return res.status(HttpCode.OK).json({
         status: "success",
-        code: 200,
+        code: HttpCode.OK,
         data: {
           contact,
         },
@@ -89,17 +90,17 @@ const update = async (req, res, next) => {
       userId
     );
     if (contact) {
-      return res.json({
+      return res.status(HttpCode.OK).json({
         status: "success",
-        code: 200,
+        code: HttpCode.OK,
         data: {
           contact,
         },
       });
     } else {
-      return res.status(404).json({
+      return res.status(HttpCode.NOT_FOUND).json({
         status: "error",
-        code: 404,
+        code: HttpCode.NOT_FOUND,
         data: "Not Found",
       });
     }
