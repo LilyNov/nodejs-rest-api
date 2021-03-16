@@ -9,8 +9,14 @@ const listContacts = async (userId) => {
   return result;
 };
 
-const getContactById = async (contactId) => {
-  const result = await Contact.findOne({ _id: contactId });
+const getContactById = async (contactId, userId) => {
+  const result = await Contact.findOne({
+    _id: contactId,
+    owner: userId,
+  }).populate({
+    path: "owner",
+    select: "email -_id",
+  });
   return result;
 };
 
@@ -19,18 +25,19 @@ const addContact = async (body) => {
   return result;
 };
 
-const updateContact = async (contactId, body) => {
+const updateContact = async (contactId, body, userId) => {
   const result = await Contact.findByIdAndUpdate(
-    { _id: contactId },
+    { _id: contactId, owner: userId },
     { ...body },
     { new: true }
   );
   return result;
 };
 
-const removeContact = async (contactId) => {
+const removeContact = async (contactId, userId) => {
   const result = await Contact.findByIdAndRemove({
     _id: contactId,
+    owner: userId,
   });
   return result;
 };
